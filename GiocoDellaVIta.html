@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game of Life 3D - Documentazione Tecnica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGAZIONE -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3>Navigazione</h3>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#introduzione" class="nav-link">0. Introduzione al GoL</a></li>
+            <li><a href="#macro-sezioni" class="nav-link">1. Macro-Sezioni</a></li>
+            <li><a href="#funzioni-chiave" class="nav-link">2. Funzioni Chiave</a></li>
+            <li><a href="#dubbi-specifici" class="nav-link">3. Dubbi Specifici</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>Documentazione modulare per analisi codice</p>
+        </div>
+    </nav>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <div class="main-wrapper">
+        
+        <!-- HEADER -->
+        <header class="page-header">
+            <h1>Game of Life 3D: Documentation Lab</h1>
+            <p class="subtitle">Struttura modulare per l'analisi del codice</p>
+        </header>
+
+        <!-- CONTAINER DOCUMENTAZIONE -->
+        <div class="documentation-container">
+
+            <!-- ============================================ -->
+            <!-- SEZIONE 0: INTRODUZIONE -->
+            <!-- ============================================ -->
+            <section id="introduzione" class="doc-section">
+                <div class="section-header">
+                    <span class="section-number">0</span>
+                    <h2>Il Gioco della Vita: Una Introduzione Approfondita</h2>
+                </div>
+
+                <div class="section-content">
+                    
+                    <!-- Intro con immagine Conway -->
+                    <div class="intro-layout">
+                        <div class="intro-text">
+                            <p>Il <strong>Game of Life</strong> (noto anche come <em>Life</em> o semplicemente <em>GoL</em>) è stato inventato nel 1970 dal matematico britannico <strong>John Horton Conway</strong>. Non si tratta di un gioco nel senso classico del termine: è un <strong>automa cellulare</strong> zero-player, ovvero un sistema che evolve da solo una volta impostate le condizioni iniziali, senza alcun intervento successivo.</p>
+                            
+                            <p>Conway lo pubblicò nella rubrica "Mathematical Games" di <em>Scientific American</em> (ottobre 1970), curata da Martin Gardner. L'obiettivo originale era creare un sistema che mostrasse comportamenti simili alla vita biologica (nascita, morte, riproduzione, movimento) partendo da regole estremamente semplici. Il risultato superò di gran lunga le aspettative: da pochissime regole locali emerge una complessità incredibile, con pattern che si comportano come veri e propri organismi.</p>
+                            
+                            <p>Il Game of Life è diventato uno dei più celebri esempi di <strong>emergenza</strong> e complessità computazionale. È stato studiato in ambiti molto diversi: matematica ricreativa, teoria della computazione, biologia teorica, fisica statistica, intelligenza artificiale e persino filosofia (cosa significa "vita"?).</p>
+                        </div>
+
+                        <div class="intro-aside">
+                            <figure class="portrait-figure">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCiGNTqHusAUkSHjC5UcdAyMR9sWrJ2aXlDsS1H7GnYKwL0GxpGiLwAOespIULE7vfyGjp_d8nNSzdT3G223M3S-_TpmnsTCoBu08hzKc&s=10" 
+                                     alt="John Horton Conway">
+                                <figcaption>John Horton Conway<br>(26 dicembre 1937 – 11 aprile 2020)</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <!-- Regole B3/S23 -->
+                    <div class="rules-container">
+                        <h3>Le Regole Esatte – B3/S23</h3>
+                        <p>Ogni cella ha otto possibili vicini (vicinato di Moore). Lo stato successivo dipende solo dallo stato attuale e dal numero di vicini vivi:</p>
+                        
+                        <div class="table-wrapper">
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>Stato attuale</th>
+                                        <th>N. vicini vivi</th>
+                                        <th>Stato successivo</th>
+                                        <th>Motivazione</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Viva</td>
+                                        <td>0 o 1</td>
+                                        <td>Morta</td>
+                                        <td>Isolamento / solitudine</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Viva</td>
+                                        <td>2 o 3</td>
+                                        <td>Viva</td>
+                                        <td>Sopravvivenza confortevole</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Viva</td>
+                                        <td>4–8</td>
+                                        <td>Morta</td>
+                                        <td>Sovraffollamento</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Morta</td>
+                                        <td>esattamente 3</td>
+                                        <td>Viva</td>
+                                        <td>Nascita</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Morta</td>
+                                        <td>qualsiasi altro</td>
+                                        <td>Morta</td>
+                                        <td>Nessuna nascita</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="notation-box">
+                            <strong>Notazione standard: B3/S23</strong><br>
+                            B = Birth (nascita), S = Survival (sopravvivenza)<br>
+                            I numeri indicano i vicini necessari per l'evento.
+                        </div>
+                    </div>
+
+                    <!-- Pattern Gallery -->
+                    <div class="patterns-section">
+                        <h3>I Pattern più Famosi – Galleria Visiva</h3>
+                        <p>Questi sono alcuni dei pattern più iconici che emergono dal sistema. Ognuno dimostra un comportamento diverso: stabilità, oscillazione, movimento, generazione continua, caos controllato.</p>
+
+                        <div class="pattern-grid">
+                            <div class="pattern-card">
+                                <div class="pattern-header">Still Life – Block</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Game_of_life_block_with_border.svg/960px-Game_of_life_block_with_border.svg.png" alt="Block still life">
+                                </div>
+                                <p class="pattern-desc">2×2 quadrato. Non cambia mai.</p>
+                            </div>
+
+                            <div class="pattern-card">
+                                <div class="pattern-header">Oscillatore – Blinker (periodo 2)</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Game_of_life_blinker.gif" alt="Blinker oscillator">
+                                </div>
+                                <p class="pattern-desc">Passa continuamente da linea orizzontale a verticale.</p>
+                            </div>
+
+                            <div class="pattern-card">
+                                <div class="pattern-header">Glider – Navicella diagonale</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Game_of_life_animated_glider.gif" alt="Glider animation">
+                                </div>
+                                <p class="pattern-desc">Si sposta di 1 cella in diagonale ogni 4 generazioni.</p>
+                            </div>
+
+                            <div class="pattern-card">
+                                <div class="pattern-header">Pulsar (periodo 3)</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/07/Game_of_life_pulsar.gif" alt="Pulsar animation">
+                                </div>
+                                <p class="pattern-desc">Enorme oscillatore simmetrico, molto elegante.</p>
+                            </div>
+
+                            <div class="pattern-card">
+                                <div class="pattern-header">Gosper Glider Gun</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Gospers_glider_gun.gif" alt="Gosper glider gun">
+                                </div>
+                                <p class="pattern-desc">Genera un glider ogni 30 generazioni all'infinito.</p>
+                            </div>
+
+                            <div class="pattern-card">
+                                <div class="pattern-header">R-pentomino (Methuselah)</div>
+                                <div class="pattern-image">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Die_hard.gif/250px-Die_hard.gif" alt="R-pentomino evolution">
+                                </div>
+                                <p class="pattern-desc">Evolve per 1103 generazioni prima di stabilizzarsi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Curiosità -->
+                    <div class="curiosity-box">
+                        <h3>Curiosità e Significato Profondo</h3>
+                        <ul class="feature-list">
+                            <li>È <strong>Turing-completo</strong>: si può costruire una macchina di Turing universale all'interno del Game of Life (dimostrato nel 2000 da Paul Rendell e John Conway stesso).</li>
+                            <li>Nel 2018 è stato dimostrato che esiste un pattern finito che si replica (replicatore universale).</li>
+                            <li>Applicazioni reali: modellazione di diffusione epidemica, crescita di cristalli, algoritmi evolutivi, reti neurali cellulari, simulazioni fisiche.</li>
+                            <li>È possibile costruire all'interno del gioco: porte logiche, memoria, processori, persino un altro Game of Life!</li>
+                            <li>Sito di riferimento: <a href="https://conwaylife.com/" target="_blank">conwaylife.com</a> – catalogo di migliaia di pattern, forum, software avanzati.</li>
+                        </ul>
+                    </div>
+
+                    <div class="quote-box">
+                        <p><strong>Il vero fascino</strong> del Game of Life non sta nelle regole, ma in ciò che esse producono: complessità, bellezza e mistero emergenti da una semplicità estrema. È forse la dimostrazione più elegante che l'universo stesso potrebbe funzionare con meccanismi altrettanto semplici e profondi.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SEZIONE 1: MACRO-SEZIONI -->
+            <!-- ============================================ -->
+            <section id="macro-sezioni" class="doc-section">
+                <div class="section-header">
+                    <span class="section-number">1</span>
+                    <h2>Analisi Strutturale del Codice: Le Macro-Sezioni</h2>
+                </div>
+
+                <div class="section-content">
+                    <p class="section-intro">Il codice è progettato in modo modulare: ogni macro-sezione ha una responsabilità precisa e ben delimitata. Questo approccio facilita la manutenzione, il debug e le future estensioni (ad esempio aggiungere regole diverse, cambiare il rendering o supportare nuovi formati di pattern).</p>
+                    
+                    <p class="section-intro">Di seguito, per ogni macro-sezione:</p>
+                    <ul class="feature-list">
+                        <li><strong>Perché è separata</strong> (ragione architetturale)</li>
+                        <li><strong>Funzioni principali</strong> contenute (con breve descrizione di cosa fa ciascuna)</li>
+                        <li><strong>Range di righe approssimativo</strong> per orientarsi nel codice</li>
+                    </ul>
+
+                    <!-- Macro-sezione 1 -->
+                    <div class="macro-block">
+                        <div class="macro-header">
+                            <span class="tag tag-data">DATA & INIT</span>
+                            <h3>Configurazione Globale e Stato Iniziale</h3>
+                        </div>
+                        <div class="macro-content">
+                            <p><strong>Perché separata:</strong> Tutto ciò che riguarda la definizione delle variabili globali, le regole del gioco, l'inizializzazione delle matrici e il reset della simulazione è concentrato qui. Questo blocco è il "cuore configurabile" del programma: modificandolo si cambiano dimensioni mondo, densità iniziale, regole senza toccare logica o grafica.</p>
+                            
+                            <div class="function-list">
+                                <h4>Funzioni / Blocchi principali:</h4>
+                                <ul>
+                                    <li><strong>Variabili globali</strong> (X, Y, viviInizio, rules, vicini, mappa1/mappa2…): definiscono l'universo e le regole B3/S23.</li>
+                                    <li><strong>restart()</strong>: rilegge i parametri dall'interfaccia HTML (con eval), svuota e riempie casualmente le matrici, resetta lo stato. È il punto di ingresso per ogni riavvio.</li>
+                                    <li><strong>window.onload</strong>: sincronizza i valori iniziali negli input HTML al caricamento della pagina.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="code-range">Range approssimativo: righe 34–76</div>
+                        </div>
+                    </div>
+
+                    <!-- Macro-sezione 2 -->
+                    <div class="macro-block">
+                        <div class="macro-header">
+                            <span class="tag tag-logic">LOGIC ENGINE</span>
+                            <h3>Motore di Simulazione (Core Logica)</h3>
+                        </div>
+                        <div class="macro-content">
+                            <p><strong>Perché separata:</strong> Qui c'è solo la matematica pura del Game of Life. Separare la logica dal rendering permette di modificare le regole o ottimizzare le performance senza dover toccare la parte grafica (e viceversa). È il blocco più "scientifico" e riutilizzabile.</p>
+                            
+                            <div class="function-list">
+                                <h4>Funzioni principali:</h4>
+                                <ul>
+                                    <li><strong>advance(from0, to0)</strong>: esegue un singolo passo generazionale. Legge lo stato attuale da una mappa, calcola i vicini per ogni cella, applica le regole e scrive il nuovo stato sull'altra mappa (double buffering).</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="code-range">Range approssimativo: righe 115–140</div>
+                        </div>
+                    </div>
+
+                    <!-- Macro-sezione 3 -->
+                    <div class="macro-block">
+                        <div class="macro-header">
+                            <span class="tag tag-view">3D RENDERING</span>
+                            <h3>Visualizzazione 3D con p5.js WEBGL</h3>
+                        </div>
+                        <div class="macro-content">
+                            <p><strong>Perché separata:</strong> Tutto ciò che riguarda la trasformazione dei dati in elementi grafici (cubi, posizioni, camera) è isolato. Questo permette di sostituire facilmente WEBGL con un canvas 2D classico o un'altra libreria grafica senza toccare la simulazione.</p>
+                            
+                            <div class="function-list">
+                                <h4>Funzioni principali:</h4>
+                                <ul>
+                                    <li><strong>setup()</strong>: crea il canvas WEBGL, chiama restart() e imposta il frame rate iniziale.</li>
+                                    <li><strong>draw()</strong>: loop principale — pulisce lo sfondo, gestisce il doppio buffering, chiama advance() e displayall() alternativamente.</li>
+                                    <li><strong>displayall()</strong>: disegna tutti i cubi vivi dell'intero mondo (vista completa).</li>
+                                    <li><strong>display()</strong>: versione zoomata, disegna solo una porzione centrata della mappa.</li>
+                                    <li><strong>windowResized()</strong>: adatta le dimensioni del canvas quando la finestra del browser cambia dimensione.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="code-range">Range approssimativo: righe 142–215 + funzioni p5.js</div>
+                        </div>
+                    </div>
+
+                    <!-- Macro-sezione 4 -->
+                    <div class="macro-block">
+                        <div class="macro-header">
+                            <span class="tag tag-io">I/O PARSER</span>
+                            <h3>Lettura e Decodifica Pattern Esterni</h3>
+                        </div>
+                        <div class="macro-content">
+                            <p><strong>Perché separata:</strong> Il parsing di file esterni (RLE, plaintext, Life 1.05) è un sottosistema completamente indipendente. Isolarlo permette di aggiungere nuovi formati o migliorare la robustezza senza interferire con il resto del programma.</p>
+                            
+                            <div class="function-list">
+                                <h4>Funzioni principali:</h4>
+                                <ul>
+                                    <li><strong>decode(texta)</strong>: dispatcher principale — riconosce il formato e chiama il parser specifico.</li>
+                                    <li><strong>decode_RLE(texta)</strong>: parser del formato Run Length Encoded (il più comune su conwaylife.com).</li>
+                                    <li><strong>decode_plaintext(texta)</strong>: gestisce file .cells con * per viva e ! per commenti.</li>
+                                    <li><strong>decode_1_05(texta)</strong>: supporta il vecchio formato Life 1.05 con #P per posizione.</li>
+                                    <li><strong>readText(event)</strong>: legge il file caricato dall'utente e avvia il decoding.</li>
+                                    <li><strong>mirror_V() / mirror_H()</strong>: utility per applicare riflessioni al pattern caricato.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="code-range">Range approssimativo: righe 217–350 + readText</div>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <p><strong>Nota sull'architettura complessiva:</strong> Le macro-sezioni sono collegate solo tramite le mappe (mappa1/mappa2) e poche variabili globali. Questo rende il codice molto più pulito e manutenibile rispetto a un unico script monolitico.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SEZIONE 2: FUNZIONI CHIAVE -->
+            <!-- ============================================ -->
+            <section id="funzioni-chiave" class="doc-section">
+                <div class="section-header">
+                    <span class="section-number">2</span>
+                    <h2>Funzioni Fondamentali: Analisi Approfondita delle Logiche Complesse</h2>
+                </div>
+
+                <div class="section-content">
+                    <p class="section-intro">Questa sezione esamina in dettaglio le funzioni più critiche del codice, quelle che gestiscono la logica complessa della simulazione, il calcolo generazionale e il parsing dei pattern. Ci concentriamo sulle parti "matematiche" e algoritmiche, tralasciando elementi grafici secondari come <code>orbitControl()</code> o <code>push()/pop()</code>. Ogni funzione è spiegata passo per passo, con esempi di esecuzione, snippet di codice chiave e motivazioni architetturali.</p>
+
+                    <!-- Funzione: advance() -->
+                    <div class="function-detail">
+                        <div class="function-header">
+                            <code class="function-name">advance(from0, to0)</code>
+                            <span class="badge badge-core">Core Simulazione</span>
+                        </div>
+                        <div class="function-body">
+                            <p class="function-intro">Questa è la funzione più complessa e centrale: implementa il "tick" generazionale, calcolando lo stato successivo per ogni cella basandosi sulle regole B3/S23. È una logica pura, senza side-effect grafici, che usa double buffering per evitare interferenze durante il calcolo.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ol class="step-list">
+                                <li>Due cicli annidati (for i=0 to Y; for j=0 to X) scansionano ogni cella della griglia.</li>
+                                <li>Per ciascuna cella, resetta <code>tot=0</code> (contatore vicini vivi) e legge <code>status = from0[i][j][0]</code> (0=morta, 1=viva).</li>
+                                <li>Un terzo ciclo (for k=0 to 7) calcola le posizioni dei 8 vicini usando l'array <code>vicini</code> (es. [0,1] per sopra).</li>
+                                <li>Controllo bordi: se <code>posy</code> o <code>posx</code> fuori griglia, salta con <code>continue</code> (mondo non toroidale).</li>
+                                <li>Se il vicino è vivo (<code>from0[posy][posx][0]==1</code>), incrementa <code>tot++</code>.</li>
+                                <li>Infine, assegna nuovo stato: <code>to0[i][j][0] = rules[status][tot]</code> (lookup table per regole).</li>
+                            </ol>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è complicata:</strong> Gestisce O(X*Y*8) operazioni per generazione, con attenzione ai bordi per evitare errori di indice. Il double buffering (from0/to0) garantisce che tutti i calcoli usino lo stato precedente, evitando "propagazioni" errate.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio su piccola griglia 3x3:</h4>
+                                <p>Supponi mappa iniziale (from0):</p>
+                                <pre><code>[ [0,1,0],
+  [1,1,1],
+  [0,1,0] ]</code></pre>
+                                <p>Cella centrale (i=1,j=1, status=1): vicini vivi = 4 (sopra, sotto, sx, dx) → tot=4 >3 → nuova=0 (sovraffollamento).</p>
+                                <p>Output su to0: la cella centrale muore, altre evolvono di conseguenza.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funzione: restart() -->
+                    <div class="function-detail">
+                        <div class="function-header">
+                            <code class="function-name">restart()</code>
+                            <span class="badge badge-init">Inizializzazione Dinamica</span>
+                        </div>
+                        <div class="function-body">
+                            <p class="function-intro">Funzione per resettare la simulazione: rilegge parametri dall'interfaccia, reinizializza matrici e piazza celle vive casualmente. Usa <code>eval()</code> per dinamismo, ma attenzione: è potente ma rischioso (esposizione a injection, anche se qui controllato).</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ol class="step-list">
+                                <li>Ciclo su <code>values</code>: legge valori dagli input HTML e li esegue con <code>eval(text)</code> (es. "X=500").</li>
+                                <li>Doppio ciclo per creare <code>mappa1</code> e <code>mappa2</code> come array 2D di [0].</li>
+                                <li>Ciclo casuale: piazza <code>viviInizio</code> celle vive random (usando <code>int(random(X))</code>).</li>
+                                <li>Imposta <code>current_map=0</code> per partire dalla mappa1.</li>
+                            </ol>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è complicata:</strong> Gestisce la sincronizzazione tra UI e stato interno dinamicamente. L'uso di <code>eval()</code> permette flessibilità ma richiede cautela per sicurezza.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio:</h4>
+                                <p>Se input X=10, Y=10, viviInizio=5: crea griglia 10x10 vuota, piazza 5 celle vive casuali su mappa1.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funzione: decode_RLE() -->
+                    <div class="function-detail">
+                        <div class="function-header">
+                            <code class="function-name">decode_RLE(texta)</code>
+                            <span class="badge badge-parser">Parser Complesso</span>
+                        </div>
+                        <div class="function-body">
+                            <p class="function-intro">Parser per formato Run Length Encoded (RLE), standard su conwaylife.com. Gestisce compressione, commenti, dimensioni e posizionamento centrato, con supporto per mirroring.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ol class="step-list">
+                                <li>Svuota mappa1 e legge header "x = N, y = M" per dimensioni.</li>
+                                <li>Centra il pattern: <code>cx = X/2 - cols/2</code>, ecc.</li>
+                                <li>Per ogni linea: split con regex <code>/([ob\$])/</code> per catturare simboli e numeri.</li>
+                                <li>Gestisce multipli (es. "5b" = 5 morte): se numero, <code>mult=parseInt(op)</code>, altrimenti 1.</li>
+                                <li>Per 'o' (viva): piazza celle su mappa1; 'b' salta; '$' nuova riga.</li>
+                                <li>Applica readMode per mirroring se specificato.</li>
+                            </ol>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è complicata:</strong> Regex con cattura per non perdere delimitatori; gestione dinamica di multipli e simboli; controlli bordi per non uscire dalla griglia.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio input RLE:</h4>
+                                <pre><code>x = 3, y = 3
+bo$2bo$3o!</code></pre>
+                                <p>Output: glider centrato su mappa1.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funzione: decode_1_05() -->
+                    <div class="function-detail">
+                        <div class="function-header">
+                            <code class="function-name">decode_1_05(texta)</code>
+                            <span class="badge badge-parser">Parser Legacy</span>
+                        </div>
+                        <div class="function-body">
+                            <p class="function-intro">Parser per formato Life 1.05 (vecchio standard). Gestisce commenti #P per posizioni iniziale e * per viva.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ol class="step-list">
+                                <li>Svuota mappa1 e centra con cx/cy.</li>
+                                <li>Per ogni linea: se "#P x y", imposta offset (c=x, r=y) e bounding box.</li>
+                                <li>Per linee pattern: ciclo su caratteri, se '*' piazza [1] su mappa1 con offset.</li>
+                                <li>Aggiorna min/max per bounding (usato per mirroring).</li>
+                            </ol>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è complicata:</strong> Gestione offset multipli (#P multipli); calcolo bounding per riflessioni successive.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio input:</h4>
+                                <pre><code>#Life 1.05
+#P 0 0
+.*.
+..*</code></pre>
+                                <p>Output: pattern posizionato a (cx,cy).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funzione: readText() -->
+                    <div class="function-detail">
+                        <div class="function-header">
+                            <code class="function-name">readText(event)</code>
+                            <span class="badge badge-io">I/O Asincrono</span>
+                        </div>
+                        <div class="function-body">
+                            <p class="function-intro">Gestisce caricamento file asincrono, parsing linee e output su UI.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ol class="step-list">
+                                <li>Prende file dall'evento, legge testo con <code>await LIFE_file.text()</code>.</li>
+                                <li>Mostra testo su #output1 (prime 1000 linee).</li>
+                                <li>Splitta in linee e chiama <code>decode(linee)</code>.</li>
+                            </ol>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è complicata:</strong> Asincrona con await; gestione errori implicita; integrazione UI.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio:</h4>
+                                <p>Carica file RLE: legge, decodifica, aggiorna mappa1.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <p><strong>Conclusione:</strong> Queste funzioni formano il backbone algoritmico. Sono ottimizzate per performance (lookup, cicli efficienti) e flessibilità (modi lettura, double buffering).</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ============================================ -->
+            <!-- SEZIONE 3: DUBBI SPECIFICI -->
+            <!-- ============================================ -->
+            <section id="dubbi-specifici" class="doc-section">
+                <div class="section-header">
+                    <span class="section-number">3</span>
+                    <h2>Dubbi Specifici e Analisi Dettagliata delle Righe</h2>
+                </div>
+
+                <div class="section-content">
+                    <p class="section-intro">Questa sezione è pensata proprio per chiarire i passaggi del codice che potrebbero risultare confusi a una prima lettura. Spieghiamo ogni dubbio in modo semplice e completo, passo per passo, senza usare termini troppo tecnici (e spiegando quelli necessari). Per ciascun dubbio, copriamo: cosa fa esattamente quella riga o funzione, perché è importante, come funziona con un esempio pratico, e eventuali aspetti collegati come possibili errori o alternative.</p>
+
+                    <!-- Dubbio 1 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="line-ref">Riga 133:</span>
+                            <code>if (from0[posy][posx][0] == 1) tot++;</code>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Questa riga è al centro del calcolo dei vicini in una cella, dentro la funzione <code>advance()</code>. In parole semplici, controlla se una cella vicina è viva e, se sì, aggiunge 1 a un contatore. È importante perché il numero di vicini vivi decide se una cella nascerà, sopravviverà o morirà, secondo le regole del Game of Life.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ul class="step-list">
+                                <li><code>from0</code> è la mappa attuale (la griglia di celle da cui stiamo leggendo).</li>
+                                <li><code>posy</code> e <code>posx</code> sono le coordinate del vicino (calcolate aggiungendo offset come +1 o -1 alla cella centrale).</li>
+                                <li><code>[posy][posx][0]</code>: accede al valore della cella vicina. L'[0] è perché ogni cella è un piccolo array (per future espansioni, come colori), e 0/1 significa morta/viva.</li>
+                                <li>Se ==1 (viva), <code>tot++</code> aumenta il contatore dei vicini vivi di 1.</li>
+                            </ul>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è importante e aspetti collegati:</strong> Senza questo controllo, non sapremmo quanti vicini vivi ha una cella, e le regole non potrebbero applicarsi. È efficiente perché evita calcoli inutili. Possibile errore: se i bordi non sono gestiti (righe prima con continue), potrebbe leggere fuori griglia e causare crash. Alternativa: usare un mondo "toroidale" (bordi che si uniscono) cambiando i controlli.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio pratico:</h4>
+                                <p>Immagina una cella centrale con un vicino a destra (posx=j+1, posy=i). Se quel vicino ha [1] (viva), tot sale da 0 a 1. Alla fine, se tot=3 per una cella morta, nascerà.</p>
+                                <pre><code>// Esempio semplificato in una griglia 2x2
+from0 = [[ [1], [0] ], [ [0], [1] ]];
+tot = 0;  // Per cella (0,0)
+posy=0, posx=1: from0[0][1][0] == 0 → non incrementa
+posy=1, posx=0: from0[1][0][0] == 0 → non incrementa
+posy=1, posx=1: from0[1][1][0] == 1 → tot++ (tot=1)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dubbio 2 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Differenza tra <code>display()</code> e <code>displayall()</code>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Queste due funzioni disegnano le celle vive come cubi 3D, ma differiscono nel "cosa" disegnano. <code>display()</code> è per viste parziali (zoom), mentre <code>displayall()</code> mostra tutto. Sono importanti perché permettono flessibilità: puoi scegliere tra dettaglio e panoramica senza riscrivere il codice di rendering.</p>
+                            
+                            <h4>Come funziona ciascuna passo per passo:</h4>
+                            <ul class="step-list">
+                                <li><strong>display():</strong> Calcola dimensione cubo (size=widthc / x_display). Cicli limitati a una finestra (da yv to yv+y_display, xv to xv+x_display). Per ogni cella viva: translate + box(). Controlla bordi per non uscire.</li>
+                                <li><strong>displayall():</strong> Simile, ma cicli su tutta la griglia (0 to Y, 0 to X). Non ha zoom: mostra l'intero mondo, centrato.</li>
+                            </ul>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è importante e aspetti collegati:</strong> <code>display()</code> è utile per mondi grandi (evita lag disegnando meno), <code>displayall()</code> per overview. Nel codice attuale, draw() usa displayall(). Possibile errore: se x_display troppo grande, performance calano. Alternativa: aggiungere parametri per switch dinamico.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio pratico:</h4>
+                                <p>Su griglia 10x10 con x_display=5: display() disegna solo 5x5 centrale (zoom). displayall() tutti i 100 cubi, anche se lontani.</p>
+                                <pre><code>// Snippet da display()
+for (let i=yv ; i< yv+y_display ; i++) {  // Solo finestra zoom
+  for (let j=xv ; j< xv+x_display ; j++) {
+    if (mappa[i][j][0]==1) { translate... box(); }
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dubbio 3 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="line-ref">Riga 203:</span>
+                            Perché <code>current_map = 1</code> e non 0?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Questa riga è parte del "double buffering": alterna tra due mappe per calcoli sicuri. Imposta current_map=1 dopo aver calcolato mappa2 da mappa1. È importante per evitare che i cambiamenti si propaghino durante lo stesso ciclo, mantenendo la simulazione corretta.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ul class="step-list">
+                                <li>Nel draw(): se current_map==0, displayall(mappa1), advance(mappa1, mappa2), poi current_map=1.</li>
+                                <li>Prossimo frame: current_map==1, usa mappa2 (appena aggiornata).</li>
+                                <li>Se mettessi =0, riuseresti sempre mappa1, ignorando gli aggiornamenti.</li>
+                            </ul>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è importante e aspetti collegati:</strong> Senza switch, il calcolo sarebbe "asincrono" e errato (es. una cella aggiornata influenza il vicino nello stesso tick). Possibile errore: loop infiniti se non alterni. Alternativa: usare una sola mappa con copia temporanea, ma meno efficiente.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio pratico:</h4>
+                                <p>Generazione 1: mappa1 iniziale, calcola mappa2, set=1. Generazione 2: mappa2 input, calcola mappa1, set=0. Continua alternando.</p>
+                                <pre><code>// Nel draw()
+if (current_map==0) {
+  displayall(mappa1);
+  advance(mappa1, mappa2);
+  current_map=1;  // Ora mappa2 è pronta per prossimo
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dubbio 4 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="line-ref">Righe 230-236:</span>
+                            Logica di specchiamento (Mirroring)
+                        </div>
+                        <div class="faq-answer">
+                            <p>Queste righe decidono come posizionare un pattern caricato (da file) sulla mappa, inclusi riflessi verticali/orizzontali. È importante per flessibilità: puoi "specchiare" pattern senza editarli manualmente.</p>
+                            
+                            <h4>Come funziona passo per passo:</h4>
+                            <ul class="step-list">
+                                <li><code>readMode</code> da input (0,1,2): 0=standard, 1=vert. mirror, 2=oriz. mirror.</li>
+                                <li>Per viva ('o' o simile): calcola pixx/pixy basati su mode.</li>
+                                <li>Mode 1: pixx = cx + (cols-1) - (col+c) → inverte sinistra/destra.</li>
+                                <li>Mode 2: pixy = cy + (rows-1) - row → inverte alto/basso.</li>
+                                <li>Controlla bordi prima di piazzare [1].</li>
+                            </ul>
+                            
+                            <div class="insight-box">
+                                <strong>Perché è importante e aspetti collegati:</strong> Permette esperimenti (es. pattern simmetrici). Possibile errore: se cols/rows errati, pattern tagliato. Alternativa: funzioni mirror separate post-caricamento.
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4>Esempio pratico:</h4>
+                                <p>Pattern 2x2: viva a (0,0). Mode 1: diventa viva a (1,0) (specchio vert.).</p>
+                                <pre><code>// Snippet
+if (readMode==0) { pixx=cx+col+c; pixy=cy+row; }
+else if (readMode==1) { pixx=cx+(cols-1)-(col+c); pixy=cy+row; }  // Inverte x</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div><!-- Fine documentation-container -->
+
+        <!-- FOOTER -->
+        <footer class="page-footer">
+            <p>Game of Life 3D - Documentazione Tecnica Modulare</p>
+            <p>Analisi completa dell'architettura del codice</p>
+        </footer>
+
+    </div><!-- Fine main-wrapper -->
+
+</body>
+</html>
